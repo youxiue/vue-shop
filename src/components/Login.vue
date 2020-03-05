@@ -17,7 +17,7 @@
         </el-form-item>
         <!--按钮-->
         <el-form-item class="btns">
-          <el-button type="primary">登录</el-button>
+          <el-button type="primary" @click="login()">登录</el-button>
           <el-button type="info" @click="resetLoginForm()">重置</el-button>
         </el-form-item>
       </el-form>
@@ -52,6 +52,23 @@ export default {
     resetLoginForm () {
       // 说明: 在form 表单上添加 ref="loginFormRef" 属性 ,即可 通过this.$refs.loginFormRef 获取该对象.
       this.$refs.loginFormRef.resetFields()
+    },
+    login () {
+      // 表单的预验证
+      this.$refs.loginFormRef.validate(async valid => {
+        if (!valid) return
+        const { data: res } = await this.$http.post('login', this.loginForm)
+        if (res.meta.status !== 200) return this.$message.error('登录失败!')
+        this.$message.success('登录成功!')
+        /**
+         * 1. 将登录成功之后的token 保存到客户端的 sessionStorage(会话存储)  中
+         *   1.1 项目中除了登录之外的其他API接口, 必须在登录之后才能访问
+         *   1.2 token 只应在当前网站打开期间生效, 所以将token保存在 sessionStorage中
+         * 2. 通过编程式导航 跳转到后台主页 路由地址是 /home
+         */
+        window.sessionStorage.setItem('token', res.data.token)
+        this.$router.push('/home')
+      })
     }
   }
 }
