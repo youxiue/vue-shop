@@ -17,6 +17,7 @@ html, body, #app{
     /*margin-top: 15px;*/
     font-size: 12px;
 }
+/*element UI级联选择框高度溢出问题*/
 .el-cascader-menu {
     height: 300px;
 }
