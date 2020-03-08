@@ -13,12 +13,23 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
+// 导入NProgress 页面加载进度条 对应的js 和css, 显示在页面主体和 浏览器头部中间
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
 // 导入 axios
 import axios from 'axios'
 axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
+// 在 request拦截器中 展示进度条 NProgress.start()
 axios.interceptors.request.use(config => {
+  NProgress.start()
   config.headers.Authorization = window.sessionStorage.getItem('token')
   // 在最后必须return
+  return config
+})
+// 在resposnt 拦截器中, 隐藏进度条 NProgress.done()
+axios.interceptors.response.use(config => {
+  NProgress.done()
   return config
 })
 Vue.prototype.$http = axios
